@@ -34,6 +34,10 @@ class StoreDriver : public Driver {
 	optional_yield y, const DoutPrefixProvider *dpp) override {return -ENOENT;}
     int remove_topics(const std::string& tenant, RGWObjVersionTracker* objv_tracker,
         optional_yield y, const DoutPrefixProvider *dpp) override {return -ENOENT;}
+
+    virtual Driver *get_store() override {
+      return this;
+    }
 };
 
 class StoreUser : public User {
