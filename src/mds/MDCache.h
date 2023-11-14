@@ -595,7 +595,7 @@ private:
     MDRequestRef mdr;
     Context* finisher = nullptr;
   };
-  MDRequestRef quiesce_subvolume(filepath p, C_MDS_QuiesceSubvolume* c, Formatter *f = nullptr, std::chrono::milliseconds delay = 0ms) { c->complete(-ENOTSUP); return nullptr; }
+  MDRequestRef quiesce_subvolume(filepath p, C_MDS_QuiesceSubvolume* c, Formatter *f = nullptr, std::chrono::milliseconds delay = 0ms);
 
   void clean_open_file_lists();
   void dump_openfiles(Formatter *f);
@@ -1420,8 +1420,8 @@ private:
   void finish_uncommitted_fragment(dirfrag_t basedirfrag, int op);
   void rollback_uncommitted_fragment(dirfrag_t basedirfrag, frag_vec_t&& old_frags);
 
-  void dispatch_quiesce_subvolume(const MDRequestRef& mdr) { }
-  void dispatch_quiesce_subvolume_inode(const MDRequestRef& mdr) { }
+  void dispatch_quiesce_subvolume(const MDRequestRef& mdr);
+  void dispatch_quiesce_subvolume_inode(const MDRequestRef& mdr);
 
   void upkeep_main(void);
 
@@ -1462,6 +1462,8 @@ private:
   time upkeep_last_trim = time::min();
   time upkeep_last_release = time::min();
   std::atomic<bool> upkeep_trim_shutdown{false};
+
+  std::map<inodeno_t, MDRequestRef> quiesced_subvolumes;
 };
 
 class C_MDS_RetryRequest : public MDSInternalContext {
