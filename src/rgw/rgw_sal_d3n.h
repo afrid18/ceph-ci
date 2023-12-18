@@ -49,6 +49,8 @@ public:
       : FilterBucket(std::move(b)),
 	      filter(filter) {
     }
+
+  virtual ~D3NFilterBucket() = default;
 };
 
 class D3NFilterObject : public FilterObject {
@@ -62,6 +64,7 @@ public:
     class D3NFilterGetCB: public RGWGetDataCB {
     public:
       D3NFilterGetCB(D3NFilterDriver* filter) : filter(filter) {};
+      ~D3NFilterGetCB() = default;
       int handle_data(bufferlist& bl, off_t bl_ofs, off_t bl_len) override;
       void set_client_cb(RGWGetDataCB* client_cb) { this->client_cb = client_cb;}
       void set_ofs(uint64_t ofs) { this->ofs = ofs; }
@@ -106,6 +109,8 @@ public:
 									                                                          filter(filter) {}
   D3NFilterObject(std::unique_ptr<Object> next, Bucket* bucket, D3NFilterDriver* filter) : FilterObject(std::move(next), bucket),
 			                                                              filter(filter) {}
+
+  virtual ~D3NFilterObject() = default;
   virtual std::unique_ptr<Object::ReadOp> get_read_op() override;
   void set_object_version(const std::string& version) { this->version = version; }
   const std::string get_object_version() { return this->version; }
