@@ -260,6 +260,8 @@ private:
   friend class LockerContext;
   friend class LockerLogContext;
 
+  void handle_quiesce_failure(const MDRequestRef& mdr, std::string_view& marker);
+
   bool any_late_revoking_caps(xlist<Capability*> const &revoking, double timeout) const;
   uint64_t calc_new_max_size(const CInode::inode_const_ptr& pi, uint64_t size);
 
