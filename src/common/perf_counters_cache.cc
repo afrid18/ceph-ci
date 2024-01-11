@@ -41,6 +41,9 @@ void PerfCountersCache::inc(const std::string &key, int indx, uint64_t v) {
   auto counters = add(key);
   if (counters) {
     counters->inc(indx, v);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 
@@ -49,6 +52,9 @@ void PerfCountersCache::dec(const std::string &key, int indx, uint64_t v) {
   auto counters = add(key);
   if (counters) {
     counters->dec(indx, v);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 
@@ -57,6 +63,9 @@ void PerfCountersCache::tinc(const std::string &key, int indx, utime_t amt) {
   auto counters = add(key);
   if (counters) {
     counters->tinc(indx, amt);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 
@@ -65,6 +74,9 @@ void PerfCountersCache::tinc(const std::string &key, int indx, ceph::timespan am
   auto counters = add(key);
   if (counters) {
     counters->tinc(indx, amt);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 
@@ -73,6 +85,9 @@ void PerfCountersCache::set_counter(const std::string &key, int indx, uint64_t v
   auto counters = add(key);
   if (counters) {
     counters->set(indx, val);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 
@@ -103,6 +118,9 @@ void PerfCountersCache::tset(const std::string &key, int indx, utime_t amt) {
   auto counters = add(key);
   if (counters) {
     counters->tset(indx, amt);
+    if (counters->time_filtered) {
+      counters->last_updated = ceph::coarse_real_clock::now();
+    }
   }
 }
 

@@ -138,7 +138,12 @@ void PerfCountersCollectionImpl::dump_formatted_generic(
   
   if (dump_labeled) {
     std::string prev_key_name;
+    bool array_open = false;
     for (auto l = m_loggers.begin(); l != m_loggers.end(); ++l) {
+      if ((*l)->time_filtered && ((*l)->last_updated + (*l)->time_alive < ceph::coarse_real_clock::now())) {
+        // if counters are filtered by time updated and have not been updated recently enough do not dump
+        continue;
+      }
       std::string_view key_name = ceph::perf_counters::key_name((*l)->get_name());
       if (key_name != prev_key_name) {
         // close previous set of counters before dumping new one
@@ -148,12 +153,13 @@ void PerfCountersCollectionImpl::dump_formatted_generic(
         prev_key_name = key_name;
 
         f->open_array_section(key_name);
+        array_open = true;
         (*l)->dump_formatted_generic(f, schema, histograms, true, "");
       } else {
         (*l)->dump_formatted_generic(f, schema, histograms, true, "");
       }
     }
-    if (!m_loggers.empty()) {
+    if (!m_loggers.empty() && array_open) {
       f->close_section(); // final array section
     }
   } else {
@@ -381,6 +387,25 @@ void PerfCounters::dump_formatted_generic(Formatter *f, bool schema,
 {
   if (dump_labeled) {
     f->open_object_section(""); // should be enclosed by array
+    // FOR DEBUGGING - TODO REMOVE
+    /*
+    if (time_filtered) {
+      f->open_object_section("expiration");
+      uint64_t time_alive_u64 = time_alive.count();
+      uint64_t last_updated_u64 = last_updated.time_since_epoch().count();
+      uint64_t now_u64 = ceph::coarse_real_clock::now().time_since_epoch().count();
+      f->dump_format_unquoted("time_alive", "%" PRId64 ".%09" PRId64,
+                              time_alive_u64 / 1000000000ull,
+                              time_alive_u64 % 1000000000ull);
+      f->dump_format_unquoted("last_updated", "%" PRId64 ".%09" PRId64,
+                              last_updated_u64 / 1000000000ull,
+                              last_updated_u64 % 1000000000ull);
+      f->dump_format_unquoted("now", "%" PRId64 ".%09" PRId64,
+                              now_u64 / 1000000000ull,
+                              now_u64 % 1000000000ull);
+      f->close_section();
+    }
+    */
     f->open_object_section("labels");
     for (auto label : ceph::perf_counters::key_labels(m_name)) {
       // don't dump labels with empty label names

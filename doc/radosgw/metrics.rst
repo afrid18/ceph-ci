@@ -197,6 +197,17 @@ The ceph-exporter daemon scrapes the Ceph Object Gateway's admin socket at a reg
 
 Prometheus has a configurable interval in which it scrapes the exporter (see: https://prometheus.io/docs/prometheus/latest/configuration/configuration/).
 
+Filtering Metrics from being Emmitted by Time
+=============================================
+
+Op metrics in either cache that haven't been updated within a configured amount of time can be filtered out of the ``counter dump`` command.
+
+This is set by the config variable ``rgw_op_counters_dump_expiration``.
+
+For example ``rgw_op_counters_dump_expiration`` is set to 10 seconds. Example buckets ``BucketA`` and ``BucketB`` have the put object operation done on each bucket at the same time.
+
+If ``BucketA`` has another put object operation done on it after 5 seconds, then after 6 more seconds (11 seconds after the original put object operations) if the ``counter dump`` command is run only metrics for ``BucketA`` will be in the output.
+
 Config Reference
 ================
 The following rgw op metrics related settings can be set via ``ceph config set client.rgw CONFIG_VARIABLE VALUE``.
@@ -205,6 +216,7 @@ The following rgw op metrics related settings can be set via ``ceph config set c
 .. confval:: rgw_user_counters_cache_size
 .. confval:: rgw_bucket_counters_cache
 .. confval:: rgw_bucket_counters_cache_size
+.. confval:: rgw_op_counters_dump_expiration
 
 The following are notable ceph-exporter related settings can be set via ``ceph config set global CONFIG_VARIABLE VALUE``.
 

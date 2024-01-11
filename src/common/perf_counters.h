@@ -233,6 +233,9 @@ public:
 
   ~PerfCounters();
 
+  bool time_filtered = false;
+  ceph::coarse_real_clock::duration time_alive;
+  ceph::coarse_real_clock::time_point last_updated;
   void inc(int idx, uint64_t v = 1);
   void dec(int idx, uint64_t v = 1);
   void set(int idx, uint64_t v);
