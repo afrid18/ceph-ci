@@ -124,11 +124,9 @@ std::shared_ptr<PerfCounters> create_rgw_op_counters(const std::string& name, Ce
   add_rgw_op_counters(&pcb);
   std::shared_ptr<PerfCounters> new_counters(pcb.create_perf_counters());
   cct->get_perfcounters_collection()->add(new_counters.get());
-  uint64_t expiration_time_int = cct->_conf.get_val<uint64_t>("rgw_op_counters_dump_expiration");
-  if (expiration_time_int) {
-    new_counters->time_filtered = true;
-    ceph::coarse_real_clock::duration expiration_time(expiration_time_int*1000000000);
-    new_counters->time_alive = expiration_time;
+  new_counters->time_filtered = cct->_conf.get_val<bool>("rgw_op_counters_time_filtered");
+  if (new_counters->time_filtered) {
+    new_counters->time_alive = std::chrono::seconds(cct->_conf.get_val<uint64_t>("rgw_op_counters_dump_expiration"));
     new_counters->last_updated = ceph::coarse_real_clock::now();
   }
   return new_counters;

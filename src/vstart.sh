@@ -709,9 +709,6 @@ do_rgw_conf() {
         rgw frontends = $rgw_frontend port=${current_port}${flight_conf:+,arrow_flight}
         admin socket = ${CEPH_OUT_DIR}/radosgw.${current_port}.asok
         debug rgw_flight = 20
-        # For debugging, will be removed
-        rgw bucket counters cache = true
-        rgw op counters dump expiration = 5
 EOF
         current_port=$((current_port + 1))
         unset flight_conf
