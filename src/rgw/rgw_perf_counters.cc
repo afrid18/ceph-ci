@@ -169,14 +169,14 @@ void inc(const CountersContainer &counters, int idx, uint64_t v) {
   if (counters.user_counters) {
     PerfCounters *user_counters = counters.user_counters.get();
     user_counters->inc(idx, v);
-    if (user_counter->time_filtered) {
+    if (user_counters->time_filtered) {
       user_counters->last_updated = ceph::coarse_real_clock::now();
     }
   }
   if (counters.bucket_counters) {
     PerfCounters *bucket_counters = counters.bucket_counters.get();
     bucket_counters->inc(idx, v);
-    if (bucket_counter->time_filtered) {
+    if (bucket_counters->time_filtered) {
       bucket_counters->last_updated = ceph::coarse_real_clock::now();
     }
   }

@@ -233,11 +233,9 @@ public:
 
   ~PerfCounters();
 
-  std::atomic<bool> time_filtered = { false };
+  bool time_filtered = false;
   std::atomic<ceph::coarse_real_clock::duration> time_alive = { std::chrono::nanoseconds::zero() };
-  // TODO: REMOVE THIS COMMENT
-  // Should this variable be initialized to ceph::coarse_real_clock::now()?
-  std::atomic<ceph::coarse_real_clock::time_point> last_updated;
+  ceph::coarse_real_clock::time_point last_updated;
   void inc(int idx, uint64_t v = 1);
   void dec(int idx, uint64_t v = 1);
   void set(int idx, uint64_t v);
