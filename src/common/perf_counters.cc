@@ -141,7 +141,7 @@ void PerfCountersCollectionImpl::dump_formatted_generic(
     bool array_open = false;
     for (auto l = m_loggers.begin(); l != m_loggers.end(); ++l) {
       if ((*l)->time_filtered) {
-        if ((*l)->last_updated + (*l)->time_alive.load() < ceph::coarse_real_clock::now()) {
+        if ((*l)->last_updated.load() + (*l)->time_alive < ceph::coarse_real_clock::now()) {
           // if counters are filtered by time updated and have not been updated recently enough do not dump
           continue;
         }
